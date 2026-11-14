@@ -1081,6 +1081,17 @@ dialog::backdrop { background: rgba(0, 0, 0, .5); }
     else { stopConfetti(); renderSignup(); }
   }
 
+  // Another tab on this device changed the tournament: follow it, so this tab
+  // can't later overwrite newer results with its stale copy.
+  window.addEventListener('storage', function (e) {
+    if (e.key !== null && e.key !== KEY) return;
+    state = load();
+    render();
+    if ($('roster').open) {
+      if (state.bracket) renderRoster(); else $('roster').close();
+    }
+  });
+
   render();
   save();
 })();
