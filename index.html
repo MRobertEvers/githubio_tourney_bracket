@@ -1,0 +1,1089 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kart Cup</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23fff'/%3E%3Cpath d='M0 0h8v8H0zM8 8h8v8H8z' fill='%23191b20'/%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #f3f1ea;
+  --surface: #ffffff;
+  --surface-2: #f4f2ec;
+  --line: #dcd7ca;
+  --text: #191b20;
+  --muted: #646a75;
+  --accent: #c92d1a;
+  --accent-ink: #ffffff;
+  --gold: #f0bd2b;
+  --silver: #bcc4cf;
+  --bronze: #cf8a4d;
+  --badge-ink: #1b1608;
+  --check-a: #191b20;
+  --check-b: #ffffff;
+  --shadow: 0 1px 2px rgba(20, 20, 30, .06), 0 6px 20px rgba(20, 20, 30, .06);
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12141a;
+    --surface: #1c1f27;
+    --surface-2: #262a34;
+    --line: #353a48;
+    --text: #f1f2f4;
+    --muted: #9aa1b0;
+    --accent: #ff6a57;
+    --accent-ink: #1a0703;
+    --check-a: #f1f2f4;
+    --check-b: #12141a;
+    --shadow: none;
+  }
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+  min-height: 100vh;
+}
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+button:disabled { cursor: default; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+h2 {
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+
+/* ---------- header ---------- */
+.top { background: var(--surface); }
+.top-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  flex-wrap: wrap;
+}
+.title {
+  flex: 1 1 220px;
+  min-width: 0;
+  border: 0;
+  border-bottom: 2px dashed transparent;
+  border-radius: 0;
+  background: none;
+  padding: 2px 0;
+  font-size: clamp(22px, 3.4vw, 32px);
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+.title:hover, .title:focus { border-bottom-color: var(--line); outline: none; }
+.top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.checker {
+  height: 12px;
+  background: conic-gradient(var(--check-a) 25%, var(--check-b) 0 50%, var(--check-a) 0 75%, var(--check-b) 0) 0 0 / 12px 12px;
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.btn:hover:not(:disabled) { border-color: var(--muted); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover:not(:disabled) { filter: brightness(1.08); border-color: var(--accent); }
+.btn.big { width: 100%; min-height: 56px; font-size: 18px; font-style: italic; font-weight: 900; letter-spacing: .04em; text-transform: uppercase; }
+.btn:disabled { opacity: .45; }
+
+/* ---------- layout ---------- */
+main { padding: 20px; }
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+.warn {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--accent);
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+/* ---------- sign-up ---------- */
+.signup {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  align-items: start;
+}
+@media (max-width: 760px) { .signup { grid-template-columns: minmax(0, 1fr); } }
+
+.add { display: flex; gap: 8px; }
+.add input {
+  flex: 1;
+  min-width: 0;
+  min-height: 52px;
+  padding: 0 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-2);
+  font-size: 18px;
+}
+.add input:focus { outline: none; border-color: var(--accent); }
+.add .btn { min-height: 52px; }
+.error { min-height: 1.4em; margin: 6px 2px 8px; color: var(--accent); font-weight: 600; font-size: 14px; }
+
+.players {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+}
+.players li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding-left: 12px;
+  background: var(--surface-2);
+  border-radius: 10px;
+}
+.players .num { color: var(--muted); font-weight: 700; font-variant-numeric: tabular-nums; min-width: 1.4em; }
+.players .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
+.players .remove {
+  width: 44px; height: 48px;
+  border: 0; background: none;
+  color: var(--muted);
+  font-size: 22px; line-height: 1;
+  border-radius: 10px;
+}
+.players .remove:hover { color: var(--accent); }
+
+.count { font-size: 44px; font-weight: 900; font-style: italic; line-height: 1; font-variant-numeric: tabular-nums; }
+.count small { font-size: 15px; font-style: normal; font-weight: 600; color: var(--muted); margin-left: 6px; }
+.rounds-preview { list-style: none; margin: 16px 0; padding: 0; }
+.rounds-preview li { padding: 10px 0; border-top: 1px solid var(--line); }
+.rounds-preview b { display: block; font-size: 13px; font-style: italic; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.rounds-preview span { color: var(--muted); font-size: 15px; }
+.check { display: flex; align-items: center; gap: 10px; min-height: 44px; margin-bottom: 12px; font-weight: 600; }
+.check input { width: 22px; height: 22px; accent-color: var(--accent); }
+
+/* ---------- bracket ---------- */
+.status {
+  display: flex;
+  align-items: baseline;
+  gap: 8px 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+.status b { font-style: italic; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.status .progress { margin-left: auto; color: var(--muted); font-size: 15px; font-variant-numeric: tabular-nums; }
+
+.bracket-scroll { overflow-x: auto; margin: 0 -20px; padding: 4px 20px 20px; }
+.bracket { display: flex; justify-content: center; gap: 20px; width: max-content; min-width: 100%; }
+.round { flex: 1 0 250px; max-width: 360px; display: flex; flex-direction: column; }
+.round > h2 { text-align: center; color: var(--muted); }
+.races { flex: 1; display: flex; flex-direction: column; justify-content: space-around; gap: 16px; }
+
+.race {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: var(--shadow);
+}
+.race.next { border-color: var(--accent); }
+.race.waiting, .race.skipped { opacity: .62; box-shadow: none; }
+.race-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.race-head h3 { margin: 0; font-size: 17px; font-weight: 900; font-style: italic; letter-spacing: .04em; text-transform: uppercase; }
+.tag {
+  font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 999px;
+  color: var(--muted); border: 1.5px solid var(--line);
+}
+.race.next .tag { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.rule { margin: 2px 0 10px; font-size: 13px; color: var(--muted); }
+.slots { display: grid; gap: 6px; }
+.slot {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  width: 100%; min-height: 48px;
+  padding: 6px 8px 6px 14px;
+  border: 0; border-radius: 10px;
+  background: var(--surface-2);
+  text-align: left; font-weight: 700; font-size: 17px;
+}
+.slot .name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+button.slot:not(:disabled):hover { box-shadow: inset 0 0 0 2px var(--muted); }
+button.slot:not(:disabled):active { transform: scale(.985); }
+.slot.empty {
+  background: none; border: 1.5px dashed var(--line);
+  color: var(--muted); font-weight: 600; font-size: 14px;
+}
+.slot.out { opacity: .45; font-weight: 600; }
+.slot.gone { opacity: .55; font-weight: 600; }
+.slot.gone .name { text-decoration: line-through; }
+.slot .note { flex: none; padding-right: 6px; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.slot.placed { box-shadow: inset 5px 0 0 var(--place); }
+.slot.placed:hover { box-shadow: inset 5px 0 0 var(--place), inset 0 0 0 2px var(--muted) !important; }
+.p1 { --place: var(--gold); }
+.p2 { --place: var(--silver); }
+.p3 { --place: var(--bronze); }
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  flex: none;
+  padding: 4px 10px; border-radius: 999px;
+  background: var(--place); color: var(--badge-ink);
+  font-size: 14px; font-weight: 900;
+}
+.badge svg { width: 16px; height: 16px; fill: currentColor; }
+.hint { margin: 10px 2px 0; font-size: 13px; color: var(--muted); }
+.race.next .hint, .race.ready .hint { color: var(--text); font-weight: 700; }
+
+/* ---------- podium ---------- */
+.podium {
+  max-width: 720px;
+  margin: 0 auto 24px;
+  text-align: center;
+}
+.podium h2 { font-size: 20px; margin-bottom: 18px; }
+.steps { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); align-items: end; gap: 10px; }
+.step { min-width: 0; }
+.step.p1 { order: 2; }
+.step.p2 { order: 1; }
+.step.p3 { order: 3; }
+.step svg { width: 44px; height: 44px; fill: var(--place); filter: drop-shadow(0 1px 0 rgba(0, 0, 0, .25)); }
+.step.p1 svg { width: 64px; height: 64px; }
+.step .who { margin: 2px 0 8px; font-size: clamp(17px, 3vw, 24px); font-weight: 900; overflow-wrap: anywhere; }
+.step .block {
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 10px 10px 0 0;
+  background: var(--place); color: var(--badge-ink);
+  font-size: 22px; font-weight: 900; font-style: italic;
+}
+.step.p1 .block { height: 104px; font-size: 30px; }
+.step.p2 .block { height: 72px; }
+.step.p3 .block { height: 50px; }
+
+/* ---------- dialogs & confetti ---------- */
+dialog {
+  width: min(420px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 22px;
+  background: var(--surface);
+  color: var(--text);
+}
+dialog::backdrop { background: rgba(0, 0, 0, .5); }
+#confirm p { margin: 0 0 18px; font-size: 17px; font-weight: 600; }
+#confirm form { display: flex; justify-content: flex-end; gap: 8px; }
+
+#roster { width: min(580px, calc(100vw - 32px)); }
+.roster-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.roster-head h2 { margin: 0; font-size: 18px; }
+#roster p { margin: 0 0 12px; }
+.roster-list { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 6px; }
+.roster-list li {
+  display: flex; align-items: center; gap: 10px;
+  min-height: 52px; padding: 4px 6px 4px 4px;
+  background: var(--surface-2); border-radius: 10px;
+}
+.rename {
+  flex: 1; min-width: 0; min-height: 44px;
+  padding: 0 10px;
+  border: 1.5px solid transparent; border-radius: 8px;
+  background: none;
+  font-weight: 700; font-size: 17px;
+}
+.rename:hover { border-color: var(--line); }
+.rename:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+.roster-list .state { flex: none; color: var(--muted); font-size: 14px; white-space: nowrap; }
+.roster-list .btn { flex: none; min-width: 104px; padding: 0 12px; }
+.roster-list li.dropped .rename { text-decoration: line-through; color: var(--muted); }
+#roster .error { margin-bottom: 0; }
+
+#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="trophy" viewBox="0 0 24 24">
+    <path fill-rule="evenodd" d="M7 3h10v2h3v3a4 4 0 0 1-4 4h-.3A5 5 0 0 1 13 14.9V18h3v3H8v-3h3v-3.1A5 5 0 0 1 8.3 12H8a4 4 0 0 1-4-4V5h3V3zm0 4H6v1a2 2 0 0 0 1 1.7V7zm10 0v2.7A2 2 0 0 0 18 8V7h-1z"/>
+  </symbol>
+</svg>
+
+<header class="top">
+  <div class="top-inner">
+    <input id="title" class="title" aria-label="Tournament name (tap to rename)" maxlength="40" autocomplete="off" spellcheck="false">
+    <div class="top-actions">
+      <button id="rosterBtn" class="btn" type="button" hidden>Manage racers</button>
+      <button id="editBtn" class="btn" type="button" hidden>Back to sign-ups</button>
+      <button id="resetBtn" class="btn" type="button" hidden>New tournament</button>
+    </div>
+  </div>
+  <div class="checker" aria-hidden="true"></div>
+</header>
+
+<main>
+  <p id="storageWarn" class="warn" hidden>This browser is blocking local storage (private window?), so the tournament won't survive a page reload.</p>
+
+  <section id="signup" class="signup">
+    <div class="panel">
+      <h2>Sign up</h2>
+      <form id="addForm" class="add">
+        <input id="nameInput" placeholder="Racer name" aria-label="Racer name" maxlength="20" autocomplete="off" autocapitalize="words" enterkeyhint="done">
+        <button class="btn primary" type="submit">Add racer</button>
+      </form>
+      <p id="addError" class="error" role="alert"></p>
+      <ol id="playerList" class="players"></ol>
+      <p id="emptyMsg" class="muted">No racers yet. Add at least 2 to start.</p>
+    </div>
+
+    <aside class="panel">
+      <h2>Format</h2>
+      <div class="count"><span id="count">0</span><small>racers</small></div>
+      <ul id="format" class="rounds-preview"></ul>
+      <p class="muted small" style="margin-top:0">Up to 4 racers per race. After each cup, tap the finishers in order.</p>
+      <label class="check"><input type="checkbox" id="shuffle"> Shuffle racers into random races</label>
+      <button id="startBtn" class="btn primary big" type="button">Start tournament</button>
+    </aside>
+  </section>
+
+  <section id="bracketView" hidden>
+    <div id="podium" class="podium" hidden></div>
+    <div id="status" class="status"></div>
+    <div class="bracket-scroll"><div id="bracket" class="bracket"></div></div>
+  </section>
+</main>
+
+<dialog id="roster" aria-labelledby="rosterTitle">
+  <div class="roster-head">
+    <h2 id="rosterTitle">Manage racers</h2>
+    <form method="dialog"><button class="btn primary">Done</button></form>
+  </div>
+  <p class="muted small">Drop anyone who leaves and the bracket carries on without them. Edit a name to hand that seat to a substitute.</p>
+  <ul id="rosterList" class="roster-list"></ul>
+  <form id="lateForm" class="add">
+    <input id="lateInput" placeholder="Late racer name" aria-label="Late racer name" maxlength="20" autocomplete="off" autocapitalize="words" enterkeyhint="done">
+    <button class="btn" type="submit">Add late racer</button>
+  </form>
+  <p id="lateNote" class="muted small" style="margin-top:8px"></p>
+  <p id="rosterError" class="error" role="alert"></p>
+</dialog>
+
+<dialog id="confirm">
+  <p id="confirmMsg"></p>
+  <form method="dialog">
+    <button class="btn" value="cancel">Cancel</button>
+    <button class="btn primary" id="confirmOk" value="ok">OK</button>
+  </form>
+</dialog>
+
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script>
+(function () {
+  'use strict';
+
+  var KEY = 'kart-tourney-v1';
+  var ORD = ['1st', '2nd', '3rd'];
+  var MAX_PLAYERS = 64;
+  var RACE_SIZE = 4;
+  var VACANT = -1; // a slot nobody will fill, because the race feeding it ran short of racers
+
+  function $(id) { return document.getElementById(id); }
+
+  function h(tag, props) {
+    var el = document.createElement(tag);
+    for (var k in props || {}) {
+      var v = props[k];
+      if (v == null || v === false) continue;
+      if (k === 'class') el.className = v;
+      else if (k === 'text') el.textContent = v;
+      else if (k === 'disabled') el.disabled = true;
+      else if (k.slice(0, 2) === 'on') el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v);
+    }
+    for (var i = 2; i < arguments.length; i++) {
+      var kids = [].concat(arguments[i]);
+      for (var j = 0; j < kids.length; j++) {
+        if (kids[j] != null && kids[j] !== false) el.append(kids[j]);
+      }
+    }
+    return el;
+  }
+
+  function trophyIcon() {
+    var span = document.createElement('span');
+    span.innerHTML = '<svg aria-hidden="true"><use href="#trophy"/></svg>';
+    return span.firstChild;
+  }
+
+  /* ---------- state ---------- */
+
+  function fresh() {
+    return { title: 'Kart Cup', players: [], nextId: 1, shuffle: true, bracket: null, dropped: [] };
+  }
+
+  function load() {
+    try {
+      var s = JSON.parse(localStorage.getItem(KEY));
+      if (s && Array.isArray(s.players)) {
+        s = Object.assign(fresh(), s);
+        if (s.bracket && !Array.isArray(s.bracket.rounds)) s.bracket = null;
+        if (!Array.isArray(s.dropped)) s.dropped = [];
+        return s;
+      }
+    } catch (e) { /* fall through to a fresh state */ }
+    return fresh();
+  }
+
+  function save() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(state));
+      $('storageWarn').hidden = true;
+    } catch (e) {
+      $('storageWarn').hidden = false;
+    }
+  }
+
+  var state = load();
+
+  function playerName(id) {
+    for (var i = 0; i < state.players.length; i++) {
+      if (state.players[i].id === id) return state.players[i].name;
+    }
+    return '?';
+  }
+
+  function isDropped(id) { return state.dropped.indexOf(id) >= 0; }
+
+  // Returns {name} for a usable name, or {error}. exceptId lets a racer keep their own name.
+  function checkName(raw, exceptId) {
+    var name = raw.trim().replace(/\s+/g, ' ');
+    if (!name) return { error: 'Type a name first.' };
+    var taken = state.players.some(function (p) {
+      return p.id !== exceptId && p.name.toLowerCase() === name.toLowerCase();
+    });
+    if (taken) return { error: name + ' is already signed up.' };
+    if (exceptId == null && state.players.length >= MAX_PLAYERS) {
+      return { error: 'That’s the limit of ' + MAX_PLAYERS + ' racers.' };
+    }
+    return { name: name };
+  }
+
+  function addPlayer(name) {
+    var player = { id: state.nextId++, name: name };
+    state.players.push(player);
+    return player;
+  }
+
+  /* ---------- bracket model ----------
+     Races hold up to 4 racers. The top 2 of each race advance (only the winner
+     from a 2-racer race) until 4 or fewer remain; that last race is the final,
+     where 1st, 2nd and 3rd are picked for trophies.
+     A slot is either {player: id} or {from: raceId, place: 0|1}.
+     Everything else (who is in a race, whether it is finished) is derived from
+     the recorded places and the list of dropped racers, so edits stay consistent. */
+
+  function advanceCount(size) { return size <= 2 ? 1 : 2; }
+
+  function buildBracket(ids) {
+    var rounds = [];
+    var no = 0;
+    function mk(slots) { return { id: ++no, slots: slots, places: [], adv: advanceCount(slots.length) }; }
+    function buckets(n) { var a = []; while (a.length < n) a.push([]); return a; }
+
+    var count = Math.ceil(ids.length / RACE_SIZE) || 1;
+    var first = buckets(count);
+    ids.forEach(function (p, i) { first[i % count].push({ player: p }); });
+    rounds.push(first.map(mk));
+
+    while (rounds[rounds.length - 1].length > 1) {
+      var prev = rounds[rounds.length - 1];
+      var total = prev.reduce(function (s, r) { return s + r.adv; }, 0);
+      var n = Math.ceil(total / RACE_SIZE);
+      var next = buckets(n);
+      // Winners spread across the next round; runners-up are offset by one race
+      // so two racers from the same race don't meet again straight away.
+      prev.forEach(function (r, i) { next[i % n].push({ from: r.id, place: 0 }); });
+      prev.forEach(function (r, i) {
+        if (r.adv > 1) next[(i + 1) % n].push({ from: r.id, place: 1 });
+      });
+      rounds.push(next.map(mk));
+    }
+    return { rounds: rounds };
+  }
+
+  // How many places get picked in a race when it has enough racers.
+  function capOf(race, isFinal) {
+    return isFinal ? 3 : (race.adv || advanceCount(race.slots.length));
+  }
+
+  // One pass in round order. For each race id:
+  //   entrants  per slot: a player id, VACANT, or null while still waiting on an earlier race
+  //   eligible  entrants who can still be given a place (dropped racers only if already placed)
+  //   need      places to pick: the cap, or fewer when racers have dropped
+  //   done      line-up known and every needed place picked
+  function analyze() {
+    var rounds = state.bracket.rounds;
+    var last = rounds.length - 1;
+    var info = {};
+    rounds.forEach(function (round, ri) {
+      round.forEach(function (race) {
+        var entrants = race.slots.map(function (slot) {
+          if (slot.player != null) return slot.player;
+          var src = info[slot.from];
+          var p = src.race.places[slot.place];
+          return p != null ? p : src.done ? VACANT : null;
+        });
+        var eligible = entrants.filter(function (p) {
+          return p != null && p !== VACANT && (!isDropped(p) || race.places.indexOf(p) >= 0);
+        });
+        var ready = entrants.indexOf(null) < 0;
+        var need = Math.min(capOf(race, ri === last), eligible.length);
+        info[race.id] = {
+          race: race, isFinal: ri === last, entrants: entrants, eligible: eligible,
+          ready: ready, need: need, done: ready && race.places.length >= need
+        };
+      });
+    });
+    return info;
+  }
+
+  function roundName(rounds, i) {
+    if (i === rounds.length - 1) return 'Final';
+    if (i === rounds.length - 2 && rounds[i].length === 2) return 'Semifinals';
+    return 'Round ' + (i + 1);
+  }
+
+  function raceLabel(it) { return it.isFinal ? 'Final' : 'Race ' + it.race.id; }
+
+  function finalInfo(info) {
+    var rounds = state.bracket.rounds;
+    return info[rounds[rounds.length - 1][0].id];
+  }
+
+  function finalWon() {
+    var it = finalInfo(analyze());
+    return it.done && it.race.places.length > 0;
+  }
+
+  function hasResults() {
+    return !!state.bracket && state.bracket.rounds.some(function (round) {
+      return round.some(function (r) { return r.places.length > 0; });
+    });
+  }
+
+  // Clear any race whose recorded result no longer matches its line-up.
+  function sweep() {
+    var cleared = 0;
+    for (;;) {
+      var info = analyze();
+      var stale = null;
+      for (var id in info) { // integer keys iterate in ascending order, i.e. earliest race first
+        var it = info[id];
+        if (!it.race.places.length) continue;
+        var strangers = it.race.places.filter(function (p) { return it.entrants.indexOf(p) < 0; });
+        if (!it.ready || strangers.length) { stale = it.race; break; }
+      }
+      if (!stale) return cleared;
+      stale.places = [];
+      cleared++;
+    }
+  }
+
+  // Run an edit to the live tournament. If it would wipe results from later
+  // races, ask first and roll everything back when the answer is no.
+  function change(edit) {
+    var snapshot = JSON.stringify(state);
+    var wasWon = finalWon();
+    edit();
+    var cleared = sweep();
+    function finish(ok) {
+      if (!ok) state = JSON.parse(snapshot);
+      save();
+      renderBracket();
+      if ($('roster').open) renderRoster();
+      if (ok && !wasWon && finalWon()) celebrate();
+    }
+    if (!cleared) { finish(true); return; }
+    ask('This also clears ' + cleared + ' later ' + (cleared === 1 ? 'race' : 'races') + ' that depended on it.', 'Go ahead').then(finish);
+  }
+
+  /* ---------- confirm dialog ---------- */
+
+  function openDialog(d) {
+    if (d.showModal) d.showModal(); else d.setAttribute('open', '');
+  }
+
+  function ask(message, okLabel) {
+    return new Promise(function (done) {
+      var d = $('confirm');
+      if (!d.showModal) { done(window.confirm(message)); return; }
+      $('confirmMsg').textContent = message;
+      $('confirmOk').textContent = okLabel;
+      d.returnValue = '';
+      d.addEventListener('close', function () { done(d.returnValue === 'ok'); }, { once: true });
+      d.showModal();
+    });
+  }
+
+  /* ---------- sign-up view ---------- */
+
+  function describeFormat(n) {
+    if (n < 2) return [];
+    var ids = [];
+    for (var i = 0; i < n; i++) ids.push(i);
+    var rounds = buildBracket(ids).rounds;
+    return rounds.map(function (round, ri) {
+      var sizes = round.map(function (r) { return r.slots.length; });
+      var min = Math.min.apply(null, sizes), max = Math.max.apply(null, sizes);
+      if (ri === rounds.length - 1) {
+        return {
+          name: 'Final',
+          detail: sizes[0] + ' racers · ' + (sizes[0] >= 3 ? '1st, 2nd & 3rd' : '1st & 2nd') + ' take trophies'
+        };
+      }
+      var detail = round.length + ' races of ' + (min === max ? min : min + '–' + max) + ' · top 2 advance';
+      if (min <= 2) detail += ' (winner only from the 2-racer race)';
+      return { name: roundName(rounds, ri), detail: detail };
+    });
+  }
+
+  function renderSignup() {
+    var list = $('playerList');
+    list.textContent = '';
+    state.players.forEach(function (p, i) {
+      list.append(h('li', null,
+        h('span', { class: 'num', text: i + 1 }),
+        h('span', { class: 'name', text: p.name }),
+        h('button', {
+          class: 'remove', type: 'button', 'aria-label': 'Remove ' + p.name, text: '×',
+          onclick: function () {
+            state.players = state.players.filter(function (q) { return q.id !== p.id; });
+            save();
+            render();
+          }
+        })
+      ));
+    });
+
+    var n = state.players.length;
+    $('emptyMsg').hidden = n > 0;
+    $('count').textContent = n;
+    $('shuffle').checked = !!state.shuffle;
+    $('startBtn').disabled = n < 2;
+
+    var format = $('format');
+    format.textContent = '';
+    var rounds = describeFormat(n);
+    if (!rounds.length) {
+      format.append(h('li', null, h('span', { text: 'Add at least 2 racers to see the bracket format.' })));
+    }
+    rounds.forEach(function (r) {
+      format.append(h('li', null, h('b', { text: r.name }), h('span', { text: r.detail })));
+    });
+  }
+
+  $('addForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var input = $('nameInput');
+    var res = checkName(input.value);
+    $('addError').textContent = res.error || '';
+    if (!res.error) {
+      addPlayer(res.name);
+      save();
+      input.value = '';
+      render();
+    }
+    input.focus();
+  });
+
+  $('nameInput').addEventListener('input', function () { $('addError').textContent = ''; });
+
+  $('shuffle').addEventListener('change', function (e) {
+    state.shuffle = e.target.checked;
+    save();
+  });
+
+  $('startBtn').addEventListener('click', function () {
+    if (state.players.length < 2) return;
+    var ids = state.players.map(function (p) { return p.id; });
+    if (state.shuffle) {
+      for (var i = ids.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = ids[i]; ids[i] = ids[j]; ids[j] = t;
+      }
+    }
+    state.bracket = buildBracket(ids);
+    state.dropped = [];
+    save();
+    render();
+    window.scrollTo(0, 0);
+  });
+
+  /* ---------- bracket view ---------- */
+
+  function tap(raceId, pid) {
+    change(function () {
+      var it = analyze()[raceId];
+      var race = it.race;
+      var idx = race.places.indexOf(pid);
+      if (idx >= 0) { race.places.length = idx; return; } // undo this place and every place after it
+      if (!it.ready || race.places.length >= it.need || isDropped(pid)) return;
+      race.places.push(pid);
+      // When one place and one racer are left, that last place is decided.
+      var left = it.eligible.filter(function (p) { return race.places.indexOf(p) < 0; });
+      if (left.length === 1 && race.places.length === it.need - 1) race.places.push(left[0]);
+    });
+  }
+
+  function raceCard(it, nextId) {
+    var race = it.race;
+    var done = it.done;
+    var status = done ? (it.need ? 'done' : 'skipped') : !it.ready ? 'waiting' : race.id === nextId ? 'next' : 'ready';
+    var label = raceLabel(it);
+
+    var rule;
+    if (it.isFinal) {
+      var trophies = it.ready ? it.need : Math.min(3, race.slots.length);
+      rule = trophies >= 3 ? '1st, 2nd & 3rd take trophies' : trophies === 2 ? '1st & 2nd take trophies' : 'Winner takes the trophy';
+    } else {
+      rule = capOf(race, false) === 2 ? 'Top 2 advance' : 'Winner advances';
+    }
+
+    var rows = race.slots.map(function (slot, i) {
+      var pid = it.entrants[i];
+      if (pid == null) return h('div', { class: 'slot empty', text: ORD[slot.place] + ' from Race ' + slot.from });
+      if (pid === VACANT) return h('div', { class: 'slot empty', text: 'No racer' });
+
+      var name = playerName(pid);
+      var place = race.places.indexOf(pid);
+      var gone = isDropped(pid) && place < 0;
+      var cls = 'slot';
+      var extra = null;
+      if (place >= 0) {
+        cls += ' placed p' + (place + 1);
+        extra = h('span', { class: 'badge' }, it.isFinal ? trophyIcon() : null, ORD[place]);
+      } else if (gone) {
+        cls += ' gone';
+        extra = h('span', { class: 'note', text: 'Dropped' });
+      } else if (done) {
+        cls += ' out';
+      }
+      return h('button', {
+        class: cls,
+        type: 'button',
+        disabled: !it.ready || gone || (done && place < 0),
+        'aria-label': name + (place >= 0 ? ', ' + ORD[place] + ' place. Tap to undo.' : gone ? ', dropped' : ''),
+        onclick: function () { tap(race.id, pid); }
+      }, h('span', { class: 'name', text: name }), extra);
+    });
+
+    var hint;
+    if (!it.ready) hint = 'Waiting on earlier races';
+    else if (done) hint = it.need ? 'Tap a placed racer to undo' : 'No racers left in this race';
+    else if (it.eligible.length === 1) hint = 'Only one racer left: tap to ' + (it.isFinal ? 'crown them' : 'send them through');
+    else hint = 'Tap who finished ' + ORD[race.places.length];
+
+    return h('article', { class: 'race ' + status, 'aria-label': label },
+      h('div', { class: 'race-head' },
+        h('h3', { text: label }),
+        h('span', { class: 'tag', text: { done: 'Done', skipped: 'No race', waiting: 'Waiting', next: 'Up next', ready: 'Ready' }[status] })
+      ),
+      h('p', { class: 'rule', text: rule }),
+      h('div', { class: 'slots' }, rows),
+      h('p', { class: 'hint', text: hint })
+    );
+  }
+
+  function renderBracket() {
+    var rounds = state.bracket.rounds;
+    var info = analyze();
+    var total = 0, finished = 0, next = null;
+
+    rounds.forEach(function (round) {
+      round.forEach(function (r) {
+        var it = info[r.id];
+        total++;
+        if (it.done) finished++;
+        else if (!next && it.ready) next = it;
+      });
+    });
+
+    var root = $('bracket');
+    root.textContent = '';
+    rounds.forEach(function (round, ri) {
+      root.append(h('section', { class: 'round' },
+        h('h2', { text: roundName(rounds, ri) }),
+        h('div', { class: 'races' }, round.map(function (r) { return raceCard(info[r.id], next && next.race.id); }))
+      ));
+    });
+
+    var status = $('status');
+    status.textContent = '';
+    if (next) {
+      status.append(
+        h('b', { text: 'Up next' }),
+        h('span', { text: raceLabel(next) + ': ' + next.eligible.map(playerName).join(' · ') })
+      );
+    }
+    status.append(h('span', { class: 'progress', text: finished + ' of ' + total + ' races done' }));
+
+    var podium = $('podium');
+    var final = finalInfo(info);
+    podium.textContent = '';
+    podium.hidden = !(final.done && final.race.places.length);
+    if (podium.hidden) stopConfetti();
+    else {
+      podium.append(
+        h('h2', { text: 'Podium' }),
+        h('div', { class: 'steps' }, final.race.places.map(function (pid, i) {
+          return h('div', { class: 'step p' + (i + 1) },
+            trophyIcon(),
+            h('div', { class: 'who', text: playerName(pid) }),
+            h('div', { class: 'block', text: ORD[i] })
+          );
+        }))
+      );
+    }
+  }
+
+  /* ---------- managing racers mid-tournament ---------- */
+
+  function racerStatus(pid, info) {
+    if (isDropped(pid)) return { text: 'Dropped', dropped: true };
+    var it = null;
+    for (var id in info) if (info[id].entrants.indexOf(pid) >= 0) it = info[id]; // their latest race
+    if (!it) return { text: 'Not in the bracket' };
+    if (it.done) {
+      var place = it.race.places.indexOf(pid);
+      return { text: place < 0 ? 'Knocked out' : ORD[place] + ' place' };
+    }
+    return { text: it.isFinal ? 'In the final' : 'In Race ' + it.race.id, active: true };
+  }
+
+  // The first-round race a late arrival can join: not started yet and short of 4 racers.
+  function lateSpot() {
+    var info = analyze();
+    var best = null;
+    state.bracket.rounds[0].forEach(function (race) {
+      var it = info[race.id];
+      var open = race.places.length === 0 && it.eligible.length < RACE_SIZE;
+      if (open && (!best || it.eligible.length < best.eligible.length)) best = it;
+    });
+    return best;
+  }
+
+  function setDropped(pid, dropped) {
+    change(function () {
+      state.dropped = state.dropped.filter(function (x) { return x !== pid; });
+      if (dropped) state.dropped.push(pid);
+    });
+  }
+
+  function renderRoster() {
+    var info = analyze();
+    var list = $('rosterList');
+    list.textContent = '';
+    state.players.forEach(function (p) {
+      var st = racerStatus(p.id, info);
+      var input = h('input', {
+        class: 'rename', value: p.name, maxlength: 20, autocomplete: 'off', spellcheck: 'false',
+        'aria-label': 'Name of ' + p.name,
+        onchange: function () {
+          var res = checkName(input.value, p.id);
+          $('rosterError').textContent = res.error || '';
+          if (res.error) { input.value = p.name; return; }
+          p.name = res.name;
+          save();
+          renderBracket();
+          renderRoster();
+        },
+        onkeydown: function (e) { if (e.key === 'Enter') { e.preventDefault(); input.blur(); } }
+      });
+      var action = null;
+      if (st.dropped) {
+        action = h('button', { class: 'btn', type: 'button', text: 'Bring back', onclick: function () { setDropped(p.id, false); } });
+      } else if (st.active) {
+        action = h('button', { class: 'btn', type: 'button', text: 'Drop', 'aria-label': 'Drop ' + p.name, onclick: function () { setDropped(p.id, true); } });
+      }
+      list.append(h('li', { class: st.dropped ? 'dropped' : null }, input, h('span', { class: 'state', text: st.text }), action));
+    });
+
+    var spot = lateSpot();
+    $('lateForm').hidden = !spot;
+    $('lateNote').textContent = spot
+      ? 'A late racer joins ' + (spot.isFinal ? 'the final' : 'Race ' + spot.race.id) + ', which hasn’t started yet.'
+      : 'No room for late racers: every first-round race is full or already under way.';
+  }
+
+  $('rosterBtn').addEventListener('click', function () {
+    $('rosterError').textContent = '';
+    renderRoster();
+    openDialog($('roster'));
+  });
+
+  $('lateInput').addEventListener('input', function () { $('rosterError').textContent = ''; });
+
+  $('lateForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var input = $('lateInput');
+    var res = checkName(input.value);
+    $('rosterError').textContent = res.error || '';
+    if (res.error || !lateSpot()) return;
+    input.value = '';
+    change(function () {
+      var spot = lateSpot();
+      var race = spot.race;
+      race.slots.push({ player: addPlayer(res.name).id });
+      // A 2-racer race only sent its winner through. With a third racer it
+      // sends two, as long as the race it feeds still has a free seat.
+      if (!spot.isFinal && capOf(race, false) === 1 && spot.eligible.length + 1 >= 3) {
+        state.bracket.rounds[1].some(function (nextRace) {
+          var feeds = nextRace.slots.some(function (s) { return s.from === race.id; });
+          if (feeds && nextRace.slots.length < RACE_SIZE) {
+            nextRace.slots.push({ from: race.id, place: 1 });
+            race.adv = 2;
+          }
+          return feeds;
+        });
+      }
+    });
+  });
+
+  /* ---------- header actions ---------- */
+
+  $('title').addEventListener('input', function (e) {
+    state.title = e.target.value;
+    document.title = state.title.trim() || 'Kart Cup';
+    save();
+  });
+  $('title').addEventListener('keydown', function (e) { if (e.key === 'Enter') e.target.blur(); });
+
+  $('editBtn').addEventListener('click', function () {
+    var go = hasResults()
+      ? ask('Going back to sign-ups throws away the bracket and every race result. Racers stay signed up.', 'Discard bracket')
+      : Promise.resolve(true);
+    go.then(function (ok) {
+      if (!ok) return;
+      state.bracket = null;
+      state.dropped = [];
+      save();
+      render();
+    });
+  });
+
+  $('resetBtn').addEventListener('click', function () {
+    ask('Start a new tournament? This removes every racer and result.', 'Remove everything').then(function (ok) {
+      if (!ok) return;
+      var title = state.title;
+      state = fresh();
+      state.title = title;
+      save();
+      render();
+    });
+  });
+
+  /* ---------- confetti ---------- */
+
+  var confettiRun = 0;
+
+  function stopConfetti() {
+    confettiRun++;
+    var canvas = $('confetti');
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function celebrate() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var run = ++confettiRun;
+    var canvas = $('confetti');
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var W = canvas.width = window.innerWidth * dpr;
+    var H = canvas.height = window.innerHeight * dpr;
+    var colors = ['#f0bd2b', '#bcc4cf', '#cf8a4d', '#e8402f', '#2f9be8', '#3cc47c'];
+    var bits = [];
+    for (var i = 0; i < 150; i++) {
+      bits.push({
+        x: Math.random() * W, y: -Math.random() * H * 0.5,
+        vx: (Math.random() - 0.5) * 4 * dpr, vy: (2 + Math.random() * 4) * dpr,
+        size: (7 + Math.random() * 7) * dpr,
+        rot: Math.random() * 6.28, spin: (Math.random() - 0.5) * 0.3,
+        color: colors[i % colors.length]
+      });
+    }
+    var DURATION = 3800;
+    var start = performance.now();
+    (function frame(now) {
+      if (run !== confettiRun) return;
+      var t = now - start;
+      ctx.clearRect(0, 0, W, H);
+      if (t >= DURATION) return;
+      ctx.globalAlpha = Math.min(1, (DURATION - t) / 800);
+      bits.forEach(function (b) {
+        b.x += b.vx; b.y += b.vy; b.vy += 0.05 * dpr; b.rot += b.spin;
+        ctx.save();
+        ctx.translate(b.x, b.y);
+        ctx.rotate(b.rot);
+        ctx.fillStyle = b.color;
+        ctx.fillRect(-b.size / 2, -b.size / 4, b.size, b.size / 2);
+        ctx.restore();
+      });
+      requestAnimationFrame(frame);
+    })(start);
+  }
+
+  /* ---------- boot ---------- */
+
+  function render() {
+    var inBracket = !!state.bracket;
+    $('signup').hidden = inBracket;
+    $('bracketView').hidden = !inBracket;
+    $('rosterBtn').hidden = !inBracket;
+    $('editBtn').hidden = !inBracket;
+    $('resetBtn').hidden = !inBracket && state.players.length === 0;
+    if ($('title').value !== state.title) $('title').value = state.title;
+    document.title = state.title.trim() || 'Kart Cup';
+    if (inBracket) renderBracket();
+    else { stopConfetti(); renderSignup(); }
+  }
+
+  render();
+  save();
+})();
+</script>
+</body>
+</html>
